@@ -1,0 +1,275 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    @apply font-sans antialiased;
+    @apply text-text-primary bg-bg-light;
+    @apply transition-colors duration-300;
+  }
+  
+  * {
+    @apply border-gray-200;
+  }
+}
+
+@layer components {
+  .mic-button {
+    @apply w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300;
+    @apply bg-gray-100 hover:bg-gray-200 text-gray-600;
+    @apply focus:outline-none focus:ring-2 focus:ring-primary-500;
+  }
+  
+  .mic-button.recording {
+    @apply bg-red-500 text-white animate-pulse;
+    @apply hover:bg-red-600;
+  }
+}
+
+@layer components {
+  /* Card Component */
+  .card {
+    @apply bg-white rounded-2xl shadow-card;
+    @apply transition-all duration-300 ease-in-out;
+    @apply hover:shadow-card-hover hover:-translate-y-1;
+  }
+  
+  /* Button Variants */
+  .btn {
+    @apply inline-flex items-center justify-center;
+    @apply px-6 py-3 rounded-xl font-medium;
+    @apply transition-all duration-200 ease-in-out;
+    @apply focus:outline-none focus:ring-2 focus:ring-offset-2;
+    @apply disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  
+  .btn-primary {
+    @apply bg-primary-500 text-white;
+    @apply hover:bg-primary-600 active:bg-primary-700;
+    @apply focus:ring-primary-500;
+  }
+  
+  .btn-secondary {
+    @apply bg-gray-100 text-gray-700;
+    @apply hover:bg-gray-200 active:bg-gray-300;
+    @apply focus:ring-gray-500;
+  }
+  
+  .btn-accent {
+    @apply bg-accent-500 text-white;
+    @apply hover:bg-accent-600 active:bg-accent-700;
+    @apply focus:ring-accent-500;
+  }
+  
+  .btn-ghost {
+    @apply bg-transparent text-primary-600;
+    @apply hover:bg-primary-50 active:bg-primary-100;
+    @apply focus:ring-primary-500;
+  }
+  
+  /* Input Components */
+  .input {
+    @apply w-full px-4 py-3 rounded-xl border border-gray-300;
+    @apply focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent;
+    @apply transition-all duration-200;
+    @apply disabled:bg-gray-100 disabled:cursor-not-allowed;
+  }
+  
+  .input-error {
+    @apply border-red-500 focus:ring-red-500;
+  }
+  
+  /* Text Utilities */
+  .text-gradient {
+    @apply bg-gradient-to-r from-primary-500 to-accent-500;
+    @apply bg-clip-text text-transparent;
+  }
+  
+  /* Accessibility Toolbar */
+  .a11y-toolbar {
+    @apply fixed top-4 right-4 z-50;
+    @apply bg-white rounded-2xl shadow-card p-4;
+    @apply transition-all duration-300;
+  }
+  
+  .a11y-toolbar.collapsed {
+    @apply p-2;
+  }
+  
+  /* Reading Text Styles */
+  .reading-text {
+    @apply leading-relaxed;
+    @apply transition-all duration-300;
+  }
+  
+  /* Word Highlighting */
+  .word-highlight {
+    @apply bg-yellow-200 px-1 rounded;
+    @apply transition-colors duration-150;
+  }
+  
+  .word-error {
+    @apply underline decoration-wavy decoration-red-500;
+    @apply text-red-600;
+    @apply cursor-help;
+  }
+  
+  /* Mic Button States */
+  .mic-button {
+    @apply relative;
+    @apply w-16 h-16 rounded-full;
+    @apply bg-red-500 text-white;
+    @apply hover:bg-red-600 active:bg-red-700;
+    @apply transition-all duration-200;
+    @apply focus:outline-none focus:ring-4 focus:ring-red-200;
+  }
+  
+  .mic-button.recording {
+    @apply animate-pulse;
+  }
+  
+  .mic-button.recording::before {
+    content: '';
+    @apply absolute inset-0 rounded-full;
+    @apply bg-red-500 opacity-30;
+    @apply animate-ping;
+  }
+  
+  /* Progress Bar */
+  .progress-bar {
+    @apply w-full bg-gray-200 rounded-full h-2;
+    @apply overflow-hidden;
+  }
+  
+  .progress-bar-fill {
+    @apply h-full bg-gradient-to-r from-primary-500 to-accent-500;
+    @apply transition-all duration-500 ease-out;
+  }
+  
+  /* Loading Skeleton */
+  .skeleton {
+    @apply animate-pulse bg-gray-200 rounded;
+  }
+  
+  /* Page Transitions */
+  .page-enter {
+    @apply opacity-0 translate-y-4;
+  }
+  
+  .page-enter-active {
+    @apply opacity-100 translate-y-0;
+    @apply transition-all duration-300 ease-out;
+  }
+  
+  .page-exit {
+    @apply opacity-100 translate-y-0;
+  }
+  
+  .page-exit-active {
+    @apply opacity-0 translate-y-4;
+    @apply transition-all duration-300 ease-in;
+  }
+}
+
+@layer utilities {
+  /* Text Spacing Utilities */
+  .text-spacing-normal {
+    letter-spacing: normal;
+  }
+  
+  .text-spacing-wide {
+    letter-spacing: 0.05em;
+  }
+  
+  .text-spacing-extra-wide {
+    letter-spacing: 0.1em;
+  }
+  
+  .word-spacing-normal {
+    word-spacing: normal;
+  }
+  
+  .word-spacing-wide {
+    word-spacing: 0.1em;
+  }
+  
+  /* Line Height Utilities */
+  .leading-compact {
+    line-height: 1.2;
+  }
+  
+  .leading-normal {
+    line-height: 1.6;
+  }
+  
+  .leading-relaxed {
+    line-height: 2.0;
+  }
+  
+  .leading-extra {
+    line-height: 2.5;
+  }
+  
+  /* Dark Mode Overrides */
+  .dark {
+    @apply bg-gray-900 text-gray-100;
+  }
+  
+  .dark .card {
+    @apply bg-gray-800;
+  }
+  
+  .dark .input {
+    @apply bg-gray-700 border-gray-600 text-gray-100;
+  }
+  
+  .dark .btn-secondary {
+    @apply bg-gray-700 text-gray-200;
+    @apply hover:bg-gray-600;
+  }
+  
+  /* Reduced Motion */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-gray-100;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-gray-300 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-400;
+}
+
+.dark ::-webkit-scrollbar-track {
+  @apply bg-gray-800;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  @apply bg-gray-600;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-500;
+}
