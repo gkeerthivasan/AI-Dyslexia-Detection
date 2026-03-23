@@ -1,0 +1,15 @@
+{
+  "name": "dyslexai-fullstack",
+  "version": "1.0.0",
+  "description": "Complete DyslexAI Application with Auto-Start",
+  "scripts": {
+    "start": "start.bat",
+    "start-powershell": "powershell -ExecutionPolicy Bypass -File start.ps1",
+    "start-server": "cd server && npm start",
+    "start-client": "cd client && npm run dev",
+    "stop": "taskkill /f /im node.exe 2>nul",
+    "install-all": "cd server && npm install && cd ../client && npm install"
+  },
+  "keywords": ["dyslexia", "reading", "ai", "education"],
+  "author": "DyslexAI Team"
+}

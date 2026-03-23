@@ -6,7 +6,7 @@ import toast from 'react-hot-toast';
 const initialState = {
   user: null,
   token: localStorage.getItem('dyslexai_token'),
-  isAuthenticated: false,
+  isAuthenticated: false, // Always start as false, require explicit login
   isLoading: true,
   error: null,
 };
@@ -103,29 +103,17 @@ export const AuthProvider = ({ children }) => {
     const loadUser = async () => {
       const token = localStorage.getItem('dyslexai_token');
       
-      if (!token) {
-        dispatch({
-          type: AUTH_ACTIONS.LOAD_USER_FAILURE,
-          payload: { error: 'No token found' },
-        });
-        return;
-      }
-
-      dispatch({ type: AUTH_ACTIONS.LOAD_USER_START });
-
-      try {
-        const response = await authAPI.getProfile();
-        dispatch({
-          type: AUTH_ACTIONS.LOAD_USER_SUCCESS,
-          payload: { user: response.data.user },
-        });
-      } catch (error) {
+      // Clear any old tokens to ensure fresh start
+      if (token) {
         localStorage.removeItem('dyslexai_token');
-        dispatch({
-          type: AUTH_ACTIONS.LOAD_USER_FAILURE,
-          payload: { error: error.message },
-        });
+        localStorage.removeItem('dyslexai_user');
       }
+      
+      dispatch({
+        type: AUTH_ACTIONS.LOAD_USER_FAILURE,
+        payload: { error: 'No token found' },
+      });
+      return;
     };
 
     loadUser();
