@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { useAccessibility } from '../context/AccessibilityContext';
 import { Link } from 'react-router-dom';
 import { reportsAPI, sessionsAPI } from '../utils/api';
 import { BookOpen, PlayCircle, Brain, BarChart3, TrendingUp, Clock, Target, Award } from 'lucide-react';
@@ -7,6 +8,7 @@ import AccessibilityToolbar from '../components/AccessibilityToolbar';
 
 const HomePage = () => {
   const { user } = useAuth();
+  const { getReadingStyles } = useAccessibility();
   const [stats, setStats] = useState({
     totalSessions: 0,
     avgWpm: 0,
@@ -108,7 +110,10 @@ const HomePage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-bg-light">
+    <div 
+      className="min-h-screen bg-bg-light transition-colors duration-300"
+      style={{ backgroundColor: getReadingStyles().backgroundColor }}
+    >
       <AccessibilityToolbar />
       
       {isLoading ? (
@@ -125,10 +130,26 @@ const HomePage = () => {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
               <div className="flex items-center justify-between">
                 <div>
-                  <h1 className="text-3xl font-bold mb-2">
+                  <h1 
+                    className="text-3xl font-bold mb-2"
+                    style={{ 
+                      fontFamily: getReadingStyles().fontFamily,
+                      fontSize: `${parseInt(getReadingStyles().fontSize) * 1.5}px`,
+                      color: 'white'
+                    }}
+                  >
                     Welcome back, {user?.name}! 👋
                   </h1>
-                  <p className="text-lg opacity-90">
+                  <p 
+                    className="text-lg opacity-90"
+                    style={{ 
+                      fontFamily: getReadingStyles().fontFamily,
+                      fontSize: getReadingStyles().fontSize,
+                      lineHeight: getReadingStyles().lineHeight,
+                      letterSpacing: getReadingStyles().letterSpacing,
+                      color: 'white'
+                    }}
+                  >
                     Ready to continue your reading journey today?
                   </p>
                 </div>
@@ -155,10 +176,24 @@ const HomePage = () => {
                         <Icon className="w-5 h-5" />
                       </div>
                       <div>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                        <p 
+                          className="text-sm text-gray-600 dark:text-gray-400"
+                          style={{ 
+                            fontFamily: getReadingStyles().fontFamily,
+                            fontSize: `${parseInt(getReadingStyles().fontSize) * 0.875}px`,
+                            color: getReadingStyles().color
+                          }}
+                        >
                           {stat.label}
                         </p>
-                        <p className="text-xl font-bold text-gray-900 dark:text-white">
+                        <p 
+                          className="text-xl font-bold text-gray-900 dark:text-white"
+                          style={{ 
+                            fontFamily: getReadingStyles().fontFamily,
+                            fontSize: `${parseInt(getReadingStyles().fontSize) * 1.25}px`,
+                            color: getReadingStyles().color
+                          }}
+                        >
                           {stat.value}
                         </p>
                       </div>
@@ -183,10 +218,26 @@ const HomePage = () => {
                         <Icon className="w-6 h-6" />
                       </div>
                       <div className="flex-1">
-                        <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                        <h3 
+                          className="text-xl font-semibold text-gray-900 dark:text-white mb-2"
+                          style={{ 
+                            fontFamily: getReadingStyles().fontFamily,
+                            fontSize: `${parseInt(getReadingStyles().fontSize) * 1.25}px`,
+                            color: getReadingStyles().color
+                          }}
+                        >
                           {card.title}
                         </h3>
-                        <p className="text-gray-600 dark:text-gray-400">
+                        <p 
+                          className="text-gray-600 dark:text-gray-400"
+                          style={{ 
+                            fontFamily: getReadingStyles().fontFamily,
+                            fontSize: getReadingStyles().fontSize,
+                            lineHeight: getReadingStyles().lineHeight,
+                            letterSpacing: getReadingStyles().letterSpacing,
+                            color: getReadingStyles().color
+                          }}
+                        >
                           {card.description}
                         </p>
                       </div>
@@ -198,7 +249,14 @@ const HomePage = () => {
 
             {/* Recent Activity */}
             <div className="card p-6">
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+              <h2 
+                className="text-xl font-semibold text-gray-900 dark:text-white mb-4"
+                style={{ 
+                  fontFamily: getReadingStyles().fontFamily,
+                  fontSize: `${parseInt(getReadingStyles().fontSize) * 1.25}px`,
+                  color: getReadingStyles().color
+                }}
+              >
                 Recent Activity
               </h2>
               
@@ -207,18 +265,46 @@ const HomePage = () => {
                   {recentSessions.map((session, index) => (
                     <div key={index} className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
                       <div>
-                        <h4 className="font-medium text-gray-900 dark:text-white">
+                        <h4 
+                          className="font-medium text-gray-900 dark:text-white"
+                          style={{ 
+                            fontFamily: getReadingStyles().fontFamily,
+                            fontSize: getReadingStyles().fontSize,
+                            color: getReadingStyles().color
+                          }}
+                        >
                           {session.title}
                         </h4>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                        <p 
+                          className="text-sm text-gray-600 dark:text-gray-400"
+                          style={{ 
+                            fontFamily: getReadingStyles().fontFamily,
+                            fontSize: `${parseInt(getReadingStyles().fontSize) * 0.875}px`,
+                            color: getReadingStyles().color
+                          }}
+                        >
                           {new Date(session.createdAt).toLocaleDateString()}
                         </p>
                       </div>
                       <div className="text-right">
-                        <p className="font-medium text-gray-900 dark:text-white">
+                        <p 
+                          className="font-medium text-gray-900 dark:text-white"
+                          style={{ 
+                            fontFamily: getReadingStyles().fontFamily,
+                            fontSize: getReadingStyles().fontSize,
+                            color: getReadingStyles().color
+                          }}
+                        >
                           {session.wpm} WPM
                         </p>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                        <p 
+                          className="text-sm text-gray-600 dark:text-gray-400"
+                          style={{ 
+                            fontFamily: getReadingStyles().fontFamily,
+                            fontSize: `${parseInt(getReadingStyles().fontSize) * 0.875}px`,
+                            color: getReadingStyles().color
+                          }}
+                        >
                           {session.accuracy}% Accuracy
                         </p>
                       </div>

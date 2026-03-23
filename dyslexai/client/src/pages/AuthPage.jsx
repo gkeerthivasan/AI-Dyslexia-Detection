@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useAccessibility } from '../context/AccessibilityContext';
 import { Eye, EyeOff, BookOpen, Brain, BarChart3, Users } from 'lucide-react';
 
 const AuthPage = () => {
   const { isAuthenticated, login, register, isLoading } = useAuth();
+  const { getReadingStyles } = useAccessibility();
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -118,7 +120,10 @@ const AuthPage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-500 to-accent-500 flex">
+    <div 
+      className="min-h-screen bg-gradient-to-br from-primary-500 to-accent-500 flex"
+      style={{ backgroundColor: getReadingStyles().backgroundColor }}
+    >
       {/* Left Side - Branding */}
       <div className="hidden lg:flex lg:w-1/2 flex-col justify-center px-12 text-white">
         <div className="max-w-md">
@@ -126,14 +131,40 @@ const AuthPage = () => {
             <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
               <BookOpen className="w-6 h-6" />
             </div>
-            <h1 className="text-3xl font-bold">DyslexAI</h1>
+            <h1 
+              className="text-3xl font-bold"
+              style={{ 
+                fontFamily: getReadingStyles().fontFamily,
+                fontSize: `${parseInt(getReadingStyles().fontSize) * 1.5}px`,
+                color: 'white'
+              }}
+            >
+              DyslexAI
+            </h1>
           </div>
           
-          <h2 className="text-4xl font-bold mb-4">
+          <h2 
+            className="text-4xl font-bold mb-4"
+            style={{ 
+              fontFamily: getReadingStyles().fontFamily,
+              fontSize: `${parseInt(getReadingStyles().fontSize) * 2}px`,
+              lineHeight: getReadingStyles().lineHeight,
+              color: 'white'
+            }}
+          >
             Reading made easier, one word at a time.
           </h2>
           
-          <p className="text-xl mb-12 text-white/90">
+          <p 
+            className="text-xl mb-12 text-white/90"
+            style={{ 
+              fontFamily: getReadingStyles().fontFamily,
+              fontSize: `${parseInt(getReadingStyles().fontSize) * 1.25}px`,
+              lineHeight: getReadingStyles().lineHeight,
+              letterSpacing: getReadingStyles().letterSpacing,
+              color: 'white'
+            }}
+          >
             AI-powered dyslexia and reading difficulty assistant that helps you improve your reading skills through personalized analysis and exercises.
           </p>
           
@@ -146,8 +177,28 @@ const AuthPage = () => {
                     <Icon className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="font-semibold mb-1">{feature.title}</h3>
-                    <p className="text-sm text-white/80">{feature.description}</p>
+                    <h3 
+                      className="font-semibold mb-1"
+                      style={{ 
+                        fontFamily: getReadingStyles().fontFamily,
+                        fontSize: getReadingStyles().fontSize,
+                        color: 'white'
+                      }}
+                    >
+                      {feature.title}
+                    </h3>
+                    <p 
+                      className="text-sm text-white/80"
+                      style={{ 
+                        fontFamily: getReadingStyles().fontFamily,
+                        fontSize: `${parseInt(getReadingStyles().fontSize) * 0.875}px`,
+                        lineHeight: getReadingStyles().lineHeight,
+                        letterSpacing: getReadingStyles().letterSpacing,
+                        color: 'rgba(255, 255, 255, 0.8)'
+                      }}
+                    >
+                      {feature.description}
+                    </p>
                   </div>
                 </div>
               );
@@ -164,7 +215,16 @@ const AuthPage = () => {
             <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
               <BookOpen className="w-5 h-5 text-primary-500" />
             </div>
-            <h1 className="text-2xl font-bold text-white">DyslexAI</h1>
+            <h1 
+              className="text-2xl font-bold text-white"
+              style={{ 
+                fontFamily: getReadingStyles().fontFamily,
+                fontSize: `${parseInt(getReadingStyles().fontSize) * 1.25}px`,
+                color: 'white'
+              }}
+            >
+              DyslexAI
+            </h1>
           </div>
 
           <div className="bg-white rounded-2xl shadow-2xl p-8">

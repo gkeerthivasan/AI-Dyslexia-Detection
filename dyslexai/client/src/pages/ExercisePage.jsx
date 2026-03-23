@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { exercisesAPI } from '../utils/api';
 import { useSpeechRecognition } from '../hooks/useSpeechRecognition';
+import { useAccessibility } from '../context/AccessibilityContext';
 import { BookOpen, Brain, Zap, Type, Eye, Timer, Award, Target, Mic, MicOff } from 'lucide-react';
 
 const ExercisePage = () => {
+  const { getReadingStyles } = useAccessibility();
   const [selectedExercise, setSelectedExercise] = useState(null);
   const [exercises, setExercises] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -91,9 +93,21 @@ const ExercisePage = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div 
+      className="container mx-auto px-4 py-8"
+      style={{ backgroundColor: getReadingStyles().backgroundColor }}
+    >
       <div className="max-w-6xl mx-auto">
-        <h1 className="text-3xl font-bold text-gray-800 mb-8">Reading Exercises</h1>
+        <h1 
+          className="text-3xl font-bold mb-8"
+          style={{ 
+            fontFamily: getReadingStyles().fontFamily,
+            fontSize: `${parseInt(getReadingStyles().fontSize) * 1.5}px`,
+            color: getReadingStyles().color
+          }}
+        >
+          Reading Exercises
+        </h1>
         
         {!selectedExercise ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -108,14 +122,40 @@ const ExercisePage = () => {
                     {getExerciseIcon(exercise.exerciseType)}
                   </div>
                   <div className="flex-1">
-                    <h3 className="font-semibold text-gray-800">{exercise.title}</h3>
-                    <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${getDifficultyColor(exercise.difficulty)}`}>
+                    <h3 
+                      className="font-semibold text-gray-800"
+                      style={{ 
+                        fontFamily: getReadingStyles().fontFamily,
+                        fontSize: getReadingStyles().fontSize,
+                        color: getReadingStyles().color
+                      }}
+                    >
+                      {exercise.title}
+                    </h3>
+                    <span 
+                      className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${getDifficultyColor(exercise.difficulty)}`}
+                      style={{ 
+                        fontFamily: getReadingStyles().fontFamily,
+                        fontSize: `${parseInt(getReadingStyles().fontSize) * 0.75}px`
+                      }}
+                    >
                       {exercise.difficulty}
                     </span>
                   </div>
                 </div>
                 
-                <p className="text-gray-600 mb-4">{exercise.description}</p>
+                <p 
+                  className="text-gray-600 mb-4"
+                  style={{ 
+                    fontFamily: getReadingStyles().fontFamily,
+                    fontSize: getReadingStyles().fontSize,
+                    lineHeight: getReadingStyles().lineHeight,
+                    letterSpacing: getReadingStyles().letterSpacing,
+                    color: getReadingStyles().color
+                  }}
+                >
+                  {exercise.description}
+                </p>
                 
                 <div className="flex items-center text-sm text-gray-500">
                   <Timer className="w-4 h-4 mr-1" />
@@ -175,10 +215,26 @@ const ExerciseDetail = ({ exercise, onBack, getDifficultyColor, formatDuration }
       const normalizedTranscript = transcript.toLowerCase().trim();
       const normalizedWord = currentWord.toLowerCase().trim();
       
+      // Handle first word specially - be more lenient
+      const isFirstWord = currentIndex === 0;
+      
+      console.log(`Exercise comparing: "${normalizedTranscript}" vs "${normalizedWord}"`);
+      console.log('Is first word:', isFirstWord);
+      
       // Check if the spoken word matches the target word
       if (normalizedTranscript === normalizedWord) {
         setSpeechMatch(true);
+        console.log('Exercise word matched!');
         // Auto-advance after correct match
+        setTimeout(() => {
+          handleAnswer('correct');
+          setSpeechMatch(null);
+          resetTranscript();
+        }, 1000);
+      } else if (isFirstWord && normalizedTranscript.includes(normalizedWord)) {
+        // For first word, be more lenient - accept if it contains the word
+        setSpeechMatch(true);
+        console.log('Exercise first word partially matched - accepting');
         setTimeout(() => {
           handleAnswer('correct');
           setSpeechMatch(null);
@@ -186,6 +242,7 @@ const ExerciseDetail = ({ exercise, onBack, getDifficultyColor, formatDuration }
         }, 1000);
       } else if (normalizedTranscript.length > 0) {
         setSpeechMatch(false);
+        console.log('Exercise word mismatched');
       }
     }
   }, [transcript, isStarted, isListening, currentIndex, exercise.content]);

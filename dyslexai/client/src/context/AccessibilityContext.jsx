@@ -2,7 +2,7 @@ import React, { createContext, useContext, useReducer, useEffect } from 'react';
 
 // Default accessibility settings
 const defaultSettings = {
-  font: 'OpenDyslexic', // 'Normal' | 'OpenDyslexic' | 'Lexie' | 'Arial'
+  font: 'OpenDyslexic', // 'Normal' | 'OpenDyslexic' | 'Lexie'
   fontSize: 20, // px
   lineHeight: 2.0, // rem multiplier
   letterSpacing: 'normal', // 'normal' | 'wide' | 'extraWide'
@@ -104,8 +104,6 @@ export const AccessibilityProvider = ({ children }) => {
       ? 'Inter, system-ui, sans-serif'
       : settings.font === 'OpenDyslexic'
       ? 'OpenDyslexic, sans-serif'
-      : settings.font === 'Arial'
-      ? 'Arial, sans-serif'
       : 'Inter, system-ui, sans-serif';
     
     root.style.setProperty('--reading-font-family', fontFamily);
@@ -136,8 +134,6 @@ export const AccessibilityProvider = ({ children }) => {
         ? 'Inter, system-ui, sans-serif'
         : settings.font === 'OpenDyslexic'
         ? 'OpenDyslexic, sans-serif'
-        : settings.font === 'Arial'
-        ? 'Arial, sans-serif'
         : 'Inter, system-ui, sans-serif',
       fontSize: `${settings.fontSize}px`,
       lineHeight: settings.lineHeight,

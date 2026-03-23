@@ -2,9 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useSpeechRecognition } from '../hooks/useSpeechRecognition';
 import { sessionsAPI } from '../utils/api';
 import { useAuth } from '../context/AuthContext';
+import { useAccessibility } from '../context/AccessibilityContext';
+import { useLocation } from 'react-router-dom';
 
 const ReadPage = () => {
   const { user } = useAuth();
+  const { getReadingStyles, getReadingClasses } = useAccessibility();
+  const location = useLocation();
   const [text, setText] = useState('The quick brown fox jumps over the lazy dog. This is a sample text for reading practice.');
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [isReading, setIsReading] = useState(false);
@@ -36,12 +40,22 @@ const ReadPage = () => {
       console.log('Current word:', currentWord);
       console.log('Words array:', words);
       
+      // Handle first word specially - be more lenient
+      const isFirstWord = currentWordIndex === 0;
+      
       // Check if the spoken word matches the current word
       if (cleanSpokenWord === cleanCurrentWord) {
         console.log('Word matched!');
         setCurrentWordIndex(prev => Math.min(prev + 1, words.length - 1));
         setErrors(prev => prev.filter(error => error.index !== currentWordIndex));
         // Add to full transcript
+        setFullTranscript(prev => prev ? `${prev} ${currentWord}` : currentWord);
+        resetTranscript();
+      } else if (isFirstWord && cleanSpokenWord.includes(cleanCurrentWord)) {
+        // For first word, be more lenient - accept if it contains the word
+        console.log('First word partially matched - accepting');
+        setCurrentWordIndex(prev => Math.min(prev + 1, words.length - 1));
+        setErrors(prev => prev.filter(error => error.index !== currentWordIndex));
         setFullTranscript(prev => prev ? `${prev} ${currentWord}` : currentWord);
         resetTranscript();
       } else if (cleanSpokenWord && cleanSpokenWord !== cleanCurrentWord) {
@@ -70,6 +84,20 @@ const ReadPage = () => {
       }, 500);
     }
   }, [isCompleted, isReading, stopListening]);
+
+  // Handle sample content from ResumePage
+  useEffect(() => {
+    if (location.state?.sampleContent) {
+      setText(location.state.sampleContent);
+      console.log('Loaded sample content:', location.state.sampleTitle);
+    }
+    
+    // Handle resumed session data
+    if (location.state?.sessionData) {
+      setSessionData(location.state.sessionData);
+      console.log('Loaded session data:', location.state.sessionData);
+    }
+  }, [location.state]);
 
   const handleSaveSession = async () => {
     if (!sessionStartTime) return;
@@ -129,14 +157,35 @@ const ReadPage = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div 
+      className="container mx-auto px-4 py-8 min-h-screen transition-colors duration-300"
+      style={{ backgroundColor: getReadingStyles().backgroundColor }}
+    >
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-3xl font-bold text-gray-800 mb-8">Reading Practice</h1>
+        <h1 
+          className="text-3xl font-bold mb-8"
+          style={{ 
+            fontFamily: getReadingStyles().fontFamily,
+            fontSize: `${parseInt(getReadingStyles().fontSize) * 1.5}px`,
+            color: getReadingStyles().color
+          }}
+        >
+          Reading Practice
+        </h1>
         
         {/* Reading Controls */}
         <div className="bg-white rounded-xl shadow-card p-6 mb-8">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold text-gray-700">Reading Session</h2>
+            <h2 
+              className="text-xl font-semibold"
+              style={{ 
+                fontFamily: getReadingStyles().fontFamily,
+                fontSize: `${parseInt(getReadingStyles().fontSize) * 1.25}px`,
+                color: getReadingStyles().color
+              }}
+            >
+              Reading Session
+            </h2>
             <div className="flex gap-4">
               {!isReading ? (
                 <button
@@ -213,8 +262,14 @@ const ReadPage = () => {
         </div>
 
         {/* Reading Text */}
-        <div className="bg-white rounded-xl shadow-card p-8 mb-8">
-          <div className="reading-text text-lg leading-relaxed">
+        <div 
+          className="rounded-xl shadow-card p-8 mb-8"
+          style={{ backgroundColor: '#FFFFFF' }}
+        >
+          <div 
+            className={`${getReadingClasses()} reading-text`}
+            style={getReadingStyles()}
+          >
             {words.map((word, index) => (
               <span
                 key={index}
@@ -235,13 +290,39 @@ const ReadPage = () => {
 
         {/* Current Word Display */}
         {isReading && (
-          <div className="bg-white rounded-xl shadow-card p-6 mb-8">
-            <h3 className="text-lg font-semibold text-gray-700 mb-4">Current Word:</h3>
-            <div className="text-2xl font-bold text-primary-600 mb-2">
+          <div 
+            className="rounded-xl shadow-card p-6 mb-8"
+            style={{ backgroundColor: '#FFFFFF' }}
+          >
+            <h3 
+              className="text-lg font-semibold mb-4"
+              style={{ 
+                fontFamily: getReadingStyles().fontFamily,
+                fontSize: `${parseInt(getReadingStyles().fontSize) * 1.125}px`,
+                color: getReadingStyles().color
+              }}
+            >
+              Current Word:
+            </h3>
+            <div 
+              className="text-2xl font-bold mb-2"
+              style={{ 
+                color: '#3B82F6',
+                fontFamily: getReadingStyles().fontFamily,
+                fontSize: `${parseInt(getReadingStyles().fontSize) * 1.5}px`
+              }}
+            >
               {currentWord}
             </div>
             {transcript && (
-              <div className="text-sm text-gray-600">
+              <div 
+                className="text-sm"
+                style={{ 
+                  fontFamily: getReadingStyles().fontFamily,
+                  fontSize: `${parseInt(getReadingStyles().fontSize) * 0.875}px`,
+                  color: getReadingStyles().color
+                }}
+              >
                 You said: <span className="font-medium">{transcript}</span>
               </div>
             )}
@@ -250,18 +331,62 @@ const ReadPage = () => {
 
         {/* Errors Summary */}
         {errors.length > 0 && (
-          <div className="bg-white rounded-xl shadow-card p-6">
-            <h3 className="text-lg font-semibold text-gray-700 mb-4">Reading Errors ({errors.length})</h3>
+          <div 
+            className="rounded-xl shadow-card p-6"
+            style={{ backgroundColor: '#FFFFFF' }}
+          >
+            <h3 
+              className="text-lg font-semibold mb-4"
+              style={{ 
+                fontFamily: getReadingStyles().fontFamily,
+                fontSize: `${parseInt(getReadingStyles().fontSize) * 1.125}px`,
+                color: getReadingStyles().color
+              }}
+            >
+              Reading Errors ({errors.length})
+            </h3>
             <div className="space-y-2">
               {errors.map((error, index) => (
                 <div key={index} className="flex items-center justify-between p-3 bg-red-50 rounded-lg">
                   <div>
-                    <span className="font-medium text-red-700">Expected:</span>
-                    <span className="ml-2">{error.word}</span>
+                    <span 
+                      className="font-medium text-red-700"
+                      style={{ 
+                        fontFamily: getReadingStyles().fontFamily,
+                        fontSize: getReadingStyles().fontSize
+                      }}
+                    >
+                      Expected:
+                    </span>
+                    <span 
+                      className="ml-2"
+                      style={{ 
+                        fontFamily: getReadingStyles().fontFamily,
+                        fontSize: getReadingStyles().fontSize
+                      }}
+                    >
+                      {error.word}
+                    </span>
                   </div>
                   <div>
-                    <span className="font-medium text-red-600">You said:</span>
-                    <span className="ml-2">{error.spoken}</span>
+                    <span 
+                      className="font-medium text-red-600"
+                      style={{ 
+                        fontFamily: getReadingStyles().fontFamily,
+                        fontSize: getReadingStyles().fontSize
+                      }}
+                    >
+                      You said:
+                    </span>
+                    <span 
+                      className="ml-2"
+                      style={{ 
+                        fontFamily: getReadingStyles().fontFamily,
+                        fontSize: getReadingStyles().fontSize
+                      }}
+                    >
+                      {error.spoken}
+                    </span>
                   </div>
                 </div>
               ))}

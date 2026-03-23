@@ -9,7 +9,6 @@ const AccessibilityToolbar = () => {
   const fontOptions = [
     { value: 'Normal', label: 'Normal' },
     { value: 'OpenDyslexic', label: 'OpenDyslexic' },
-    { value: 'Arial', label: 'Arial' },
   ];
 
   const backgroundOptions = [
